@@ -1,10 +1,9 @@
 /**
- * Stylesheet for Home component.
+ * Stylesheet for PageOne component.
  */
-
 import { StyleSheet } from 'react-native';
 
-import normalize, { moderateScale } from '../../lib/normalize';
+import normalize from '../../lib/normalize';
 
 const styles = StyleSheet.create({
     container: {
@@ -14,13 +13,8 @@ const styles = StyleSheet.create({
     },
     text: {
         color: 'black',
-        fontSize: normalize(40),
+        fontSize: normalize(30),
     },
-    routeText:{
-        color: 'red',
-        fontSize: normalize(20),
-        marginTop: moderateScale(50)
-    }
 });
 
 export default styles;
