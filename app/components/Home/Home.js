@@ -21,11 +21,11 @@ export default class Home extends Component {
         <Text style={styles.text} >HOME</Text>
 
         <TouchableOpacity onPress={() => navigate('pageOne')}>
-          <Text style={styles.routeText} >Page One</Text>
+          <Text style={styles.routeText} >Navigate to Page 1</Text>
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigate('pageTwo')}>
-          <Text style={styles.routeText} >Page Two</Text>
+          <Text style={styles.routeText} >WebRTC</Text>
         </TouchableOpacity>
 
       </View>
