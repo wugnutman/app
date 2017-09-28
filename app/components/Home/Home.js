@@ -25,7 +25,11 @@ export default class Home extends Component {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigate('pageTwo')}>
-          <Text style={styles.routeText} >WebRTC</Text>
+          <Text style={styles.routeText} >WebRTC Sample</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => navigate('webDemo')}>
+          <Text style={styles.routeText} >WebRTC Demo</Text>
         </TouchableOpacity>
 
       </View>
