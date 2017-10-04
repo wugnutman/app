@@ -1,5 +1,5 @@
 /**
- * Stylesheet for Chat component.
+ * Stylesheet for ChatScreen component.
  */
 import { StyleSheet } from 'react-native';
 

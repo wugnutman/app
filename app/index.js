@@ -2,17 +2,18 @@ import React, { Component } from 'react';
 import { View, Text } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 
-import { Main, Chat } from './components';
+import { Main, Chat, ChatScreen } from './components';
 import Album from './components/Main/Album';
 import ImageViewer from './components/Main/ImageViewer';
 import Settings from './components/Main/Settings';
 
 const AppNavigator = StackNavigator({
+    chat: { screen: Chat },
+    chatScreen: { screen: ChatScreen },
     main: { screen: Main },
     album: { screen: Album },
     imageViewer: { screen: ImageViewer },
     settings: { screen: Settings },
-    chat: { screen: Chat },
 }, { headerMode: 'none' });
 
 /**
