@@ -11,7 +11,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import styles from './Main.styles';
 
 /**
- * @class Represents the Main Component
+ * @class represents the Main component
  */
 export default class Main extends Component {
 
@@ -75,16 +75,24 @@ export default class Main extends Component {
                 aspect={Camera.constants.Aspect.fill}
                 style={styles.container}
             >
-                <TouchableOpacity onPress={this.onPressCapture.bind(this)}>
+
+                {/* <TouchableOpacity onPress={this.onPressCapture.bind(this)}> */}
+                <TouchableOpacity onPress={() => alert('Catured.')}>
                     <View style={{ flexDirection: 'row' }}>
                         <View style={styles.captureButton} />
                     </View>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={this.onPressCaptureStop.bind(this)}>
+
+                {/* <TouchableOpacity onPress={this.onPressCaptureStop.bind(this)}>
                     <View style={{ flexDirection: 'row' }}>
                         <View style={styles.captureButton} />
                     </View>
+                </TouchableOpacity> */}
+
+                <TouchableOpacity onPress={() => this.props.navigation.navigate('chat')}>
+                    <Icon name="comments" style={styles.iconButton} />
                 </TouchableOpacity>
+
                 <View style={styles.menuContainer}>
                     <TouchableOpacity onPress={this.onPressAlbumButton.bind(this)}>
                         <Image
