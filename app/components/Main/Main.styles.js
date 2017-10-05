@@ -3,7 +3,7 @@
  */
 import { StyleSheet, Dimensions } from 'react-native';
 
-import normalize from '../../lib/normalize';
+import normalize, { moderateScale } from '../../lib/normalize';
 
 const { width, height } = Dimensions.get('window');
 
@@ -16,27 +16,28 @@ const styles = StyleSheet.create({
   menuContainer: {
     flexDirection: 'row',
     alignSelf: "stretch",
-    justifyContent:
-    "space-between",
-    margin: 10
-  },
-  iconButton: {
-    fontSize: 32,
-    color: "#fff",
-    alignItems: "center"
-  },
-  captureButton: {
-    height: 48,
-    width: 48,
-    borderRadius: 48,
-    backgroundColor: "#fff",
-    margin: 10
+    justifyContent: "space-between",
+    margin: moderateScale(10),
+    paddingHorizontal: moderateScale(5)
   },
   albumButton: {
-    height: 42,
-    width: 42,
-    borderRadius: 42
-  }
+    height: moderateScale(48),
+    width: moderateScale(48),
+    borderRadius: moderateScale(48)
+  },
+  captureButton: {
+    height: moderateScale(48),
+    width: moderateScale(48),
+    borderRadius: moderateScale(48),
+    backgroundColor: "green",
+    // margin: moderateScale(10)
+  },
+  iconButton: {
+    fontSize: normalize(32),
+    color: "#fff",
+    alignItems: "center",
+    marginTop: moderateScale(6)
+  },
 });
 
 export default styles;
