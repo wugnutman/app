@@ -3,6 +3,8 @@ import {
     View, Text, TouchableOpacity, StyleSheet, Image, Dimensions, CameraRoll
 } from 'react-native'
 import Camera from 'react-native-camera';
+import * as Exif from 'react-native-exif';
+import RNThumbnail from 'react-native-thumbnail';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 import styles from './Main.styles';
@@ -21,9 +23,32 @@ export default class Main extends Component {
 
     // ==============================> Capture Image
     onPressCapture() {
-        this.camera.capture()
+        this.camera.capture({ thumbnail: true, width: true })
             .then((data) => {
+
+                // Got image path in data object
                 console.log(data);
+
+                // To make Thumbnail of captured image
+                RNThumbnail.get(data.path).then((result) => {
+                    console.log(result.path);
+                });
+
+                // To Get metadata from captured image
+                Exif.getExif(data.path)
+                    .then((msg) => {
+                        console.warn('getExif: ' + msg)
+                    })
+                    .catch((msg) => {
+                        console.warn('ERROR: ' + msg)
+                    })
+                Exif.getLatLong(data.path)
+                    .then((msg) => {
+                        console.warn('OK: ' + msg)
+                    })
+                    .catch((msg) => {
+                        console.warn('ERROR: ' + msg)
+                    })
             })
             .catch(err => {
                 console.error(err)
@@ -34,7 +59,7 @@ export default class Main extends Component {
     onPressCaptureStop() {
         this.camera.stopCapture()
             .then((data) => {
-                console.log(data)
+                console.log(data);
             })
             .catch(err => {
                 console.error(err)
@@ -56,6 +81,7 @@ export default class Main extends Component {
 
     // ==============================> Render function definition
     render() {
+        console.log(Camera.constants.CaptureTarget.temp);
         /**
          * captureTarget :
          * in DCIM folder or where default camera store the images => Camera.constants.CaptureTarget.cameraRoll
@@ -66,6 +92,7 @@ export default class Main extends Component {
             <Camera
                 ref={(cam) => { this.camera = cam }}
                 captureTarget={Camera.constants.CaptureTarget.temp}
+                captureQuality={Camera.constants.CaptureQuality["1080p"]}
                 aspect={Camera.constants.Aspect.fill}
                 style={styles.container}
             >
