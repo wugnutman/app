@@ -3,8 +3,8 @@ package com.livestreamingchatapp;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
-import com.reactlibrary.RNThumbnailPackage;
-import com.devialab.exif.RCTExifPackage;
+import fr.bamlab.rnimageresizer.ImageResizerPackage;
+import com.rnfs.RNFSPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.lwansbrough.RCTCamera.RCTCameraPackage;
 import com.facebook.react.ReactNativeHost;
@@ -27,8 +27,8 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
-            new RNThumbnailPackage(),
-            new RCTExifPackage(),
+            new ImageResizerPackage(),
+            new RNFSPackage(),
             new VectorIconsPackage(),
             new RCTCameraPackage()
       );
