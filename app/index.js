@@ -3,13 +3,12 @@ import { View, Text } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 
 // ==============================> Import user defined components
-import { Main, Chat, ChatScreen } from './components';
-import MainAlbum from './components/Main/MainAlbum';
+import { Main, Album } from './components';
 
 // ==============================> Screens for navigator
 const AppNavigator = StackNavigator({
     main: { screen: Main },
-    mainAlbum: {screen: MainAlbum}
+    album: { screen: Album }
 }, { headerMode: 'none' });
 
 /**

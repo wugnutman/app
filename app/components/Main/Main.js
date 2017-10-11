@@ -1,14 +1,14 @@
 import React, { Component } from 'react'
-import {
-    View, Text, TouchableOpacity, StyleSheet, Image, Dimensions, CameraRoll
-} from 'react-native'
 import Camera from 'react-native-camera';
 import * as RNFS from 'react-native-fs';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import ImageResizer from 'react-native-image-resizer';
+import {
+    View, Text, TouchableOpacity, StyleSheet, Image, Dimensions, CameraRoll
+} from 'react-native'
 
 import styles from './Main.styles';
 import { MEDIA_DEST, IMAGE_MEDIA_DEST, THUMB_MEDIA_DEST } from '../../common/constants';
+import { checkPath, compressImage, moveImage } from '../../common/utility';
 
 let self, IMAGE_NAME, MEDIA_DESTINATION, MEDIA_IMAGE_DESTINATION, MEDIA_THUMB_DESTINATION;
 
@@ -41,7 +41,7 @@ export default class Main extends Component {
                 IMAGE_NAME = '/' + Math.floor(new Date()).toString() + '.jpg';
 
                 // =====> To check whether Main Directory path is exist or not
-                self.checkPath(MEDIA_DESTINATION)
+                checkPath(MEDIA_DESTINATION)
                     .then((isExist) => {
                         if (isExist) {
                             self.workInImages(data);
@@ -62,43 +62,47 @@ export default class Main extends Component {
         // 1- Thumbnail 2- Image
 
         // 1- Check and further for Thumbnail directory.
-        self.checkPath(MEDIA_THUMB_DESTINATION)
+        checkPath(MEDIA_THUMB_DESTINATION)
             .then((isThumbExist) => {
                 let compressedPath;
                 // To get Thumbnail image
-                self.compressImage(data.path)
+                compressImage(data.path, 160, 160, 'JPEG', 100)
                     .then((response) => {
-                        // Store thumbnail path in variable compressedPath.
+                        // Save thumbnail path in compressedPath variable.
                         compressedPath = response.path;
+
+                        // If Thumbnail dir exist, Thumbnail image moved to that folder and start working on Actual image.
                         if (isThumbExist) {
-                            self.moveImage(compressedPath, (MEDIA_THUMB_DESTINATION + IMAGE_NAME));
+                            moveImage(compressedPath, (MEDIA_THUMB_DESTINATION + IMAGE_NAME));
 
                             // 2- Check and further for Images directory.
-                            self.checkPath(MEDIA_IMAGE_DESTINATION)
+                            checkPath(MEDIA_IMAGE_DESTINATION)
                                 .then((isImagesExist) => {
                                     if (isImagesExist) {
-                                        self.moveImage(data.path, (MEDIA_IMAGE_DESTINATION + IMAGE_NAME));
+                                        moveImage(data.path, (MEDIA_IMAGE_DESTINATION + IMAGE_NAME));
                                     } else {
                                         RNFS.mkdir(MEDIA_IMAGE_DESTINATION)
                                             .then(() => {
-                                                self.moveImage(data.path, (MEDIA_IMAGE_DESTINATION + IMAGE_NAME));
+                                                moveImage(data.path, (MEDIA_IMAGE_DESTINATION + IMAGE_NAME));
                                             })
                                     }
                                 })
                         } else {
+                            // If Thumbnail dir doesn't exist, make Thumbnail dir.
+                            // Then thubmnail image moved to that folder and start working on Actual image.
                             RNFS.mkdir(MEDIA_THUMB_DESTINATION)
                                 .then(() => {
-                                    self.moveImage(compressedPath, (MEDIA_THUMB_DESTINATION + IMAGE_NAME));
+                                    moveImage(compressedPath, (MEDIA_THUMB_DESTINATION + IMAGE_NAME));
 
-                                    // 2- Check and further for Images directory.
-                                    self.checkPath(MEDIA_IMAGE_DESTINATION)
+                                    // 2- Check and working for Images directory.
+                                    checkPath(MEDIA_IMAGE_DESTINATION)
                                         .then((isImagesExist) => {
                                             if (isImagesExist) {
-                                                self.moveImage(data.path, (MEDIA_IMAGE_DESTINATION + IMAGE_NAME));
+                                                moveImage(data.path, (MEDIA_IMAGE_DESTINATION + IMAGE_NAME));
                                             } else {
                                                 RNFS.mkdir(MEDIA_IMAGE_DESTINATION)
                                                     .then(() => {
-                                                        self.moveImage(data.path, (MEDIA_IMAGE_DESTINATION + IMAGE_NAME));
+                                                        moveImage(data.path, (MEDIA_IMAGE_DESTINATION + IMAGE_NAME));
                                                     })
                                             }
                                         })
@@ -106,37 +110,6 @@ export default class Main extends Component {
                         }
                     })
             });
-    }
-
-    /**
-     * Used to resize or compress the image.
-     * @param {Image path to resize} img 
-     */
-    compressImage(img) {
-        return ImageResizer.createResizedImage(img, 200, 200, 'JPEG', 100)
-    }
-
-    /**
-     * Used to move file from path to given destination path.
-     * @param {Image Path or Move From} data 
-     * @param {Destination Path or Move To} destinationPath 
-     */
-    moveImage(data, destinationPath) {
-        RNFS.moveFile(data, destinationPath)
-            .then(() => {
-                console.log('Successfully file moved!');
-            })
-            .catch((err) => {
-                console.log("Error while moving : ", err.message);
-            });
-    }
-
-    /**
-     * Used to check given path is exists or not.
-     * @param {Path to check existence} path 
-     */
-    checkPath(path) {
-        return RNFS.exists(path);
     }
 
     // ==============================> To Stop Video recording
@@ -152,7 +125,7 @@ export default class Main extends Component {
 
     // ==============================> Move to Album screen
     onPressAlbumButton() {
-        this.props.navigation.navigate('mainAlbum');
+        this.props.navigation.navigate('album');
     }
 
     // ==============================> Toggle Camer/Video icon
@@ -188,9 +161,11 @@ export default class Main extends Component {
                         <Icon name="compass" style={styles.iconButton} />
                     </TouchableOpacity>
 
-                    {/* Capture Image / Video */}
+                    {/* Capture Image/Video */}
                     <TouchableOpacity onPress={this.onPressCapture.bind(this)}>
-                        <View style={styles.captureButton} />
+                        <View style={styles.captureButtonOuter}>
+                            <View style={styles.captureButton} />
+                        </View>
                     </TouchableOpacity>
 
                     {/* Settings */}

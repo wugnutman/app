@@ -1,5 +1,5 @@
 /**
- * Stylesheet for PageTwo component.
+ * Stylesheet for Main component.
  */
 import { StyleSheet, Dimensions } from 'react-native';
 
@@ -17,6 +17,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignSelf: "stretch",
     justifyContent: "space-between",
+    alignItems: 'center',
     margin: moderateScale(10),
     paddingHorizontal: moderateScale(5)
   },
@@ -25,18 +26,24 @@ const styles = StyleSheet.create({
     width: moderateScale(48),
     borderRadius: moderateScale(48)
   },
+  captureButtonOuter: {
+    height: moderateScale(65),
+    width: moderateScale(65),
+    borderWidth: 5,
+    borderColor: '#34d058',
+    borderRadius: moderateScale(65),
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
   captureButton: {
-    height: moderateScale(48),
-    width: moderateScale(48),
-    borderRadius: moderateScale(48),
-    backgroundColor: "green",
-    // margin: moderateScale(10)
+    height: moderateScale(50),
+    width: moderateScale(50),
+    borderRadius: moderateScale(50),
+    backgroundColor: "#34d058",
   },
   iconButton: {
     fontSize: normalize(32),
     color: "#fff",
-    alignItems: "center",
-    marginTop: moderateScale(6)
   },
 });
 

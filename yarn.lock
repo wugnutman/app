@@ -3514,6 +3514,10 @@ react-native-progress@^3.2.0:
   dependencies:
     prop-types "^15.5.8"
 
+react-native-share@^1.0.23:
+  version "1.0.23"
+  resolved "https://registry.yarnpkg.com/react-native-share/-/react-native-share-1.0.23.tgz#6476f10d34e5274b9e0ef2c93def6c3a282ffe94"
+
 react-native-tab-view@^0.0.65:
   version "0.0.65"
   resolved "https://registry.yarnpkg.com/react-native-tab-view/-/react-native-tab-view-0.0.65.tgz#b685ea3081ff7c96486cd997361026c407302c59"

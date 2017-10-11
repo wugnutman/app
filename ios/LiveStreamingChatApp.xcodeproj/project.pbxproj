@@ -48,6 +48,7 @@
 		FB516D5921AC4B92A89E9561 /* Zocial.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C7F38B8FFE8D4E34A5FE7306 /* Zocial.ttf */; };
 		89828F3C8D8F440A9A9AF4A3 /* libRNFS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B88066EA58674447867E1447 /* libRNFS.a */; };
 		1B67FA4D8F454BCAA25AE52A /* libRCTImageResizer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 463750A504294793B598B26F /* libRCTImageResizer.a */; };
+		59DE4171DA83492792B4E328 /* libRNShare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C5EFC375664455586E5CF4C /* libRNShare.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -320,6 +321,8 @@
 		B88066EA58674447867E1447 /* libRNFS.a */ = {isa = PBXFileReference; name = "libRNFS.a"; path = "libRNFS.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 		EAFA5EB1D4734A2F84B268A6 /* RCTImageResizer.xcodeproj */ = {isa = PBXFileReference; name = "RCTImageResizer.xcodeproj"; path = "../node_modules/react-native-image-resizer/ios/RCTImageResizer.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
 		463750A504294793B598B26F /* libRCTImageResizer.a */ = {isa = PBXFileReference; name = "libRCTImageResizer.a"; path = "libRCTImageResizer.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		FE55813BA1964C599828E075 /* RNShare.xcodeproj */ = {isa = PBXFileReference; name = "RNShare.xcodeproj"; path = "../node_modules/react-native-share/ios/RNShare.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
+		0C5EFC375664455586E5CF4C /* libRNShare.a */ = {isa = PBXFileReference; name = "libRNShare.a"; path = "libRNShare.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -344,6 +347,7 @@
 				B1F7A97423524727B9B6F4B9 /* libRNVectorIcons.a in Frameworks */,
 				89828F3C8D8F440A9A9AF4A3 /* libRNFS.a in Frameworks */,
 				1B67FA4D8F454BCAA25AE52A /* libRCTImageResizer.a in Frameworks */,
+				59DE4171DA83492792B4E328 /* libRNShare.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -518,6 +522,7 @@
 				2E74782C2A924E1ABFA2418A /* RNVectorIcons.xcodeproj */,
 				9BED900BEF8943FA9F56967D /* RNFS.xcodeproj */,
 				EAFA5EB1D4734A2F84B268A6 /* RCTImageResizer.xcodeproj */,
+				FE55813BA1964C599828E075 /* RNShare.xcodeproj */,
 			);
 			name = Libraries;
 			sourceTree = "<group>";
@@ -1080,11 +1085,13 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-image-resizer/ios/RCTImageResizer",
+					"$(SRCROOT)/../node_modules/react-native-share/ios",
 				);
 				INFOPLIST_FILE = LiveStreamingChatApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/LiveStreamingChatApp\"",
 					"\"$(SRCROOT)/LiveStreamingChatApp\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1108,11 +1115,13 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-image-resizer/ios/RCTImageResizer",
+					"$(SRCROOT)/../node_modules/react-native-share/ios",
 				);
 				INFOPLIST_FILE = LiveStreamingChatApp/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
+					"\"$(SRCROOT)/LiveStreamingChatApp\"",
 					"\"$(SRCROOT)/LiveStreamingChatApp\"",
 				);
 				OTHER_LDFLAGS = (
@@ -1143,6 +1152,7 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-image-resizer/ios/RCTImageResizer",
+					"$(SRCROOT)/../node_modules/react-native-share/ios",
 				);
 				INFOPLIST_FILE = "LiveStreamingChatApp-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -1176,6 +1186,7 @@
 					"$(SRCROOT)/../node_modules/react-native-vector-icons/RNVectorIconsManager",
 					"$(SRCROOT)/../node_modules/react-native-fs/**",
 					"$(SRCROOT)/../node_modules/react-native-image-resizer/ios/RCTImageResizer",
+					"$(SRCROOT)/../node_modules/react-native-share/ios",
 				);
 				INFOPLIST_FILE = "LiveStreamingChatApp-tvOS/Info.plist";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
