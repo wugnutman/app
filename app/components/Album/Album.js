@@ -8,8 +8,10 @@ import { Text, TouchableOpacity, View, Image } from 'react-native';
 import styles from './Album.styles';
 import {
     IMAGE_MEDIA_DEST, THUMB_MEDIA_DEST, TWITTER_ICON, FACEBOOK_ICON, CLIPBOARD_ICON, EMAIL_ICON, GOOGLE_PLUS_ICON,
-    MORE_ICON, WHATSAPP_ICON
+    MORE_ICON, WHATSAPP_ICON, SHARE_OPTIONS
 } from '../../common/constants';
+
+let selectedArray = [];
 
 /**
  * @class represents the Album component
@@ -20,29 +22,162 @@ export default class Album extends Component {
         super(props);
         this.state = {
             media: [],
-            selection: false,
-            visible: false
+            shareVisible: false,
+            selectedItem: null,
+            visible: false,
         }
     }
 
     componentDidMount() {
-        // RNFS.readDir(RNFS.ExternalStorageDirectoryPath + THUMB_MEDIA_DEST)
-        //     .then((result) => {
-        //         const media = [];
-        //         result.forEach((temp) => {
-        //             media.push({
-        //                 photo: 'file://' + temp.path,
-        //                 thumb: 'file://' + temp.path
-        //             })
-        //         });
-        //         this.setState({ media: media });
-        //     })
-        //     .catch((err) => {
-        //         console.log(err);
-        //     })
+        this.fetchImages();
+    }
 
+    // ==============================> Render function definition
+    render() {
+        console.log(selectedArray);
+        return (
+            <View style={styles.container}>
+
+                {/* Display images in grid viewff */}
+                <PhotoBrowser
+                    style={{ backgroundColor: 'black' }}
+                    onBack={() => this.props.navigation.goBack()}
+                    mediaList={this.state.media}
+                    useCircleProgress={true}
+                    alwaysDisplayStatusBar={true}
+                    alwaysShowControls={true}
+                    displayTopBar={true}
+                    displayActionButton={true}
+                    displayNavArrows={false}
+                    enableGrid={true}
+                    startOnGrid={true}
+                    displaySelectionButtons={this.state.shareVisible}
+                    square={true}
+                    itemPerRow={2}
+                    onSelectionChanged={(media, index, selected) => {
+                        console.log('on share Visible ::: ', media, index, selected);
+                        if (selected) {
+                            let tempArr = selectedArray;
+                            tempArr.push(media);
+                            selectedArray = tempArr;
+                        } else {
+                            let tempArr = selectedArray;
+                            tempArr = tempArr.filter((item) => item.photo !== media.photo)
+                            selectedArray = tempArr;
+                        }
+                        console.log(selectedArray);
+                    }}
+                    onActionButton={(media, index) => {
+                        console.log('on action ::: ', media, index);
+                        this.setState({ visible: true, selectedItem: media.photo });
+                    }}
+                />
+
+                {/* Header */}
+                <View style={styles.headerView}>
+                    <TouchableOpacity onPress={() => this.setState({ shareVisible: !this.state.shareVisible })}>
+                        {this.state.shareVisible ?
+                            <Text style={styles.selectText}>CANCEL</Text> :
+                            <Text style={styles.selectText}>SELECT</Text>
+                        }
+                    </TouchableOpacity>
+                </View>
+
+                {/* Footer */}
+                {this.state.shareVisible ?
+                    <View style={styles.footerView}>
+
+                        <View style={styles.innerFooterView}>
+                            <TouchableOpacity onPress={this.saveSelected.bind(this)}>
+                                <Icon name="floppy-o" style={styles.footerIconButton} />
+                            </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.innerFooterView}>
+                            <TouchableOpacity onPress={this.deleteSelected.bind(this)}>
+                                <Icon name="trash" style={styles.footerIconButton} />
+                            </TouchableOpacity>
+                        </View>
+
+                    </View>
+                    : null}
+
+                {/* Share */}
+                <ShareSheet visible={this.state.visible} onCancel={() => { this.setState({ visible: false }) }}>
+
+                    <Button iconSrc={{ uri: TWITTER_ICON }} onPress={this.share.bind(this, "twitter")}
+                    >Twitter</Button>
+
+                    <Button iconSrc={{ uri: FACEBOOK_ICON }} onPress={this.share.bind(this, "facebook")}
+                    >Facebook</Button>
+
+                    <Button iconSrc={{ uri: WHATSAPP_ICON }} onPress={this.share.bind(this, "whatsapp")}
+                    >Whatsapp</Button>
+
+                    <Button iconSrc={{ uri: GOOGLE_PLUS_ICON }} onPress={this.share.bind(this, "googleplus")}
+                    >Google +</Button>
+
+                    <Button iconSrc={{ uri: EMAIL_ICON }} onPress={this.share.bind(this, "email")}
+                    >Email</Button>
+
+                    <Button iconSrc={{ uri: MORE_ICON }} onPress={this.share.bind(this, null)}
+                    >More</Button>
+
+                </ShareSheet>
+
+            </View>
+        );
+    }
+
+    saveSelected() {
+        alert('delete')
+    }
+
+    deleteSelected() {
+        selectedArray.filter((item, index) => {
+            RNFS.unlink(item.thumb)
+                .then(() => {
+                    RNFS.unlink(item.photo)
+                        .then(() => {
+                            console.log(index, selectedArray.length);
+                            if(index+1 === selectedArray.length){
+                                selectedArray = [];
+                                this.fetchImages();
+                            }
+                        })
+                        .catch((err) => {
+                            alert(err.message);
+                        })
+                })
+                .catch((err) => {
+                    alert(err.message);
+                })
+        });
+    }
+
+    /**
+     * Common method for all share buttons.
+     * @param {Social share type} shareType 
+     */
+    share(shareType) {
+        this.setState({ visible: false })
+
+        let shareOptions = SHARE_OPTIONS;
+        setTimeout(() => {
+            if (shareType) {
+                shareOptions.url = this.state.selectedItem;
+                shareOptions.social = shareType;
+                Share.shareSingle(shareOptions);
+            } else {
+                Share.open(shareOptions);
+            }
+        }, 500);
+    }
+
+    fetchImages() {
         let media = [];
         let dirImages, dirThumbs;
+        // Read image files from Images and Thumbnails directory, and then display them.
         RNFS.readDir(RNFS.ExternalStorageDirectoryPath + THUMB_MEDIA_DEST)
             .then((result) => {
                 dirThumbs = result;
@@ -50,123 +185,33 @@ export default class Album extends Component {
                     .then((result) => {
                         dirImages = result;
 
-                        dirThumbs.forEach(function (element, index) {
+                        let tempLess, tempMore;
+
+                        if (dirImages.length <= dirThumbs.length) {
+                            tempLess = dirImages;
+                            tempMore = dirThumbs;
+                        } else {
+                            tempLess = dirThumbs;
+                            tempMore = dirImages;
+                        }
+
+                        tempLess.forEach(function (element, index) {
+                            const tempObj = tempMore.find(x => x.name === element.name);
                             let obj = {};
-                            obj.thumb = 'file://' + element.path;
-                            obj.photo = 'file://' + dirImages[index].path;
+
+                            if (element.path.includes('/Thumbnails')) {
+                                obj.thumb = 'file://' + element.path;
+                                obj.photo = 'file://' + tempObj.path;
+                            } else {
+                                obj.thumb = 'file://' + tempObj.path;
+                                obj.photo = 'file://' + element.path;
+                            }
+
                             media.push(obj)
                         });
+                        media.reverse();
                         this.setState({ media: media });
                     })
             });
-    }
-
-    // ==============================> Render function definition
-    render() {
-
-        let shareOptions = {
-            title: "Andy's Solocator App",
-            message: "It is a temporary message for checking purpose.",
-            url: "http://facebook.github.io/react-native/",
-            subject: "Andy's Solocator App : Subject for E-mail" //  for email
-        };
-
-        return (
-            <View style={styles.container}>
-                <PhotoBrowser
-                    style={{ backgroundColor: 'black' }}
-                    onBack={() => alert('back called')}
-                    mediaList={this.state.media}
-                    useCircleProgress={true}
-                    alwaysDisplayStatusBar={false}
-                    alwaysShowControls={false}
-                    displayTopBar={true}
-                    displayActionButton={true}
-                    displayNavArrows={false}
-                    enableGrid={true}
-                    startOnGrid={true}
-                    displaySelectionButtons={this.state.selection}
-                    square={true}
-                    itemPerRow={2}
-                    onSelectionChanged={(media, index, selected) => {
-                        console.log('on selection ::: ', media, index, selected);
-                    }}
-                    onActionButton={(media, index) => {
-                        console.log('on action ::: ', media, index);
-                        this.setState({ visible: true });
-                    }}
-                />
-
-                {/* Header */}
-                <View style={styles.headerView}>
-                    <TouchableOpacity onPress={() => this.setState({ selection: !this.state.selection })}>
-                        {this.state.selection ?
-                            <Text style={[styles.selectText, { color: '#fff' }]}>CANCEL</Text> :
-                            <Text style={[styles.selectText, { color: '#34d058' }]}>SELECT</Text>
-                        }
-                    </TouchableOpacity>
-                </View>
-
-                {/* Footer */}
-                {/* <View style={styles.footerView}>
-                    <Icon name="camera" style={styles.iconButton} />
-                </View> */}
-
-                {/* Share */}
-                <ShareSheet visible={this.state.visible} onCancel={() => { this.setState({ visible: false }) }}>
-                    <Button iconSrc={{ uri: TWITTER_ICON }}
-                        onPress={() => {
-                            this.setState({ visible: false })
-                            setTimeout(() => {
-                                shareOptions.social = "twitter";
-                                Share.shareSingle(shareOptions);
-                            }, 300);
-                        }}>Twitter</Button>
-                    <Button iconSrc={{ uri: FACEBOOK_ICON }}
-                        onPress={() => {
-                            this.setState({ visible: false })
-                            setTimeout(() => {
-                                Share.shareSingle(Object.assign(shareOptions, {
-                                    "social": "facebook"
-                                }));
-                            }, 300);
-                        }}>Facebook</Button>
-                    <Button iconSrc={{ uri: WHATSAPP_ICON }}
-                        onPress={() => {
-                            this.setState({ visible: false })
-                            setTimeout(() => {
-                                Share.shareSingle(Object.assign(shareOptions, {
-                                    "social": "whatsapp"
-                                }));
-                            }, 300);
-                        }}>Whatsapp</Button>
-                    <Button iconSrc={{ uri: GOOGLE_PLUS_ICON }}
-                        onPress={() => {
-                            this.setState({ visible: false })
-                            setTimeout(() => {
-                                Share.shareSingle(Object.assign(shareOptions, {
-                                    "social": "googleplus"
-                                }));
-                            }, 300);
-                        }}>Google +</Button>
-                    <Button iconSrc={{ uri: EMAIL_ICON }}
-                        onPress={() => {
-                            this.setState({ visible: false })
-                            setTimeout(() => {
-                                Share.shareSingle(Object.assign(shareOptions, {
-                                    "social": "email"
-                                }));
-                            }, 300);
-                        }}>Email</Button>
-                    <Button iconSrc={{ uri: MORE_ICON }}
-                        onPress={() => {
-                            this.setState({ visible: false })
-                            setTimeout(() => {
-                                Share.open(shareOptions)
-                            }, 300);
-                        }}>More</Button>
-                </ShareSheet>
-            </View>
-        );
     }
 }

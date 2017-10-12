@@ -3,7 +3,7 @@ import Camera from 'react-native-camera';
 import * as RNFS from 'react-native-fs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {
-    View, Text, TouchableOpacity, StyleSheet, Image, Dimensions, CameraRoll
+    View, Text, TouchableOpacity, StyleSheet, Image, Dimensions, CameraRoll, AsyncStorage, ActivityIndicator
 } from 'react-native'
 
 import styles from './Main.styles';
@@ -20,8 +20,16 @@ export default class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isVideoMode: false
+            isVideoMode: false,
+            albumImage: null,
+            loading: false
         }
+    }
+
+    componentWillMount() {
+        AsyncStorage.getItem('lastClickedImage', (err, result) => {
+            this.setState({ albumImage: result });
+        })
     }
 
     componentDidMount() {
@@ -30,6 +38,7 @@ export default class Main extends Component {
 
     // ==============================> Capture Image
     onPressCapture() {
+        this.setState({ loading: true });
         this.camera.capture()
             .then((data) => {
                 // Got captured image path stored in cache memory, in data object.
@@ -73,6 +82,9 @@ export default class Main extends Component {
 
                         // If Thumbnail dir exist, Thumbnail image moved to that folder and start working on Actual image.
                         if (isThumbExist) {
+                            AsyncStorage.setItem('lastClickedImage', MEDIA_THUMB_DESTINATION + IMAGE_NAME);
+                            this.setState({ albumImage: MEDIA_THUMB_DESTINATION + IMAGE_NAME })
+
                             moveImage(compressedPath, (MEDIA_THUMB_DESTINATION + IMAGE_NAME));
 
                             // 2- Check and further for Images directory.
@@ -80,10 +92,12 @@ export default class Main extends Component {
                                 .then((isImagesExist) => {
                                     if (isImagesExist) {
                                         moveImage(data.path, (MEDIA_IMAGE_DESTINATION + IMAGE_NAME));
+                                        this.setState({ loading: false });
                                     } else {
                                         RNFS.mkdir(MEDIA_IMAGE_DESTINATION)
                                             .then(() => {
                                                 moveImage(data.path, (MEDIA_IMAGE_DESTINATION + IMAGE_NAME));
+                                                this.setState({ loading: false });
                                             })
                                     }
                                 })
@@ -99,10 +113,12 @@ export default class Main extends Component {
                                         .then((isImagesExist) => {
                                             if (isImagesExist) {
                                                 moveImage(data.path, (MEDIA_IMAGE_DESTINATION + IMAGE_NAME));
+                                                this.setState({ loading: false });
                                             } else {
                                                 RNFS.mkdir(MEDIA_IMAGE_DESTINATION)
                                                     .then(() => {
                                                         moveImage(data.path, (MEDIA_IMAGE_DESTINATION + IMAGE_NAME));
+                                                        this.setState({ loading: false });
                                                     })
                                             }
                                         })
@@ -136,6 +152,12 @@ export default class Main extends Component {
         })
     }
 
+    // ==============================> Loader
+    loader() {
+        if (this.state.loading)
+            return <ActivityIndicator size="large" hidesWhenStopped={true} />;
+    }
+
     // ==============================> Render function definition
     render() {
         return (
@@ -144,45 +166,48 @@ export default class Main extends Component {
                 captureTarget={Camera.constants.CaptureTarget.temp}
                 captureQuality={Camera.constants.CaptureQuality.high}
                 aspect={Camera.constants.Aspect.fill}
-                style={styles.container}
+                style={this.state.loading ? [styles.container, { justifyContent: 'center' }] : styles.container}
             >
-                <View style={styles.menuContainer}>
+                {this.state.loading ? null :
+                    <View style={styles.menuContainer}>
 
-                    {/* Album View */}
-                    <TouchableOpacity onPress={this.onPressAlbumButton.bind(this)}>
-                        <Image
-                            source={require('../../common/images/user.jpg')}
-                            style={styles.albumButton}
-                        />
-                    </TouchableOpacity>
+                        {/* Album View */}
+                        <TouchableOpacity onPress={this.onPressAlbumButton.bind(this)}>
+                            <Image
+                                source={{ uri: 'file://' + this.state.albumImage }}
+                                style={styles.albumButton}
+                            />
+                        </TouchableOpacity>
 
-                    {/* Location */}
-                    <TouchableOpacity style={{ marginTop: 2 }} onPress={() => alert("Loaction screen, Under developement.")}>
-                        <Icon name="compass" style={styles.iconButton} />
-                    </TouchableOpacity>
+                        {/* Location */}
+                        <TouchableOpacity style={{ marginTop: 2 }} onPress={() => alert("Loaction screen, Under developement.")}>
+                            <Icon name="compass" style={styles.iconButton} />
+                        </TouchableOpacity>
 
-                    {/* Capture Image/Video */}
-                    <TouchableOpacity onPress={this.onPressCapture.bind(this)}>
-                        <View style={styles.captureButtonOuter}>
-                            <View style={styles.captureButton} />
-                        </View>
-                    </TouchableOpacity>
+                        {/* Capture Image/Video */}
+                        <TouchableOpacity onPress={this.onPressCapture.bind(this)}>
+                            <View style={styles.captureButtonOuter}>
+                                <View style={styles.captureButton} />
+                            </View>
+                        </TouchableOpacity>
 
-                    {/* Settings */}
-                    <TouchableOpacity onPress={() => alert("Settings screen, Under developement.")}>
-                        <Icon name="cog" style={styles.iconButton} />
-                    </TouchableOpacity>
+                        {/* Settings */}
+                        <TouchableOpacity onPress={() => alert("Settings screen, Under developement.")}>
+                            <Icon name="cog" style={styles.iconButton} />
+                        </TouchableOpacity>
 
-                    {/* Toggle Camera / Video */}
-                    <TouchableOpacity onPress={this.toggleCameraMode.bind(this)}>
-                        {
-                            this.state.isVideoMode ?
-                                <Icon name="camera" style={styles.iconButton} /> :
-                                <Icon name="video-camera" style={styles.iconButton} />
-                        }
-                    </TouchableOpacity>
+                        {/* Toggle Camera / Video */}
+                        <TouchableOpacity onPress={this.toggleCameraMode.bind(this)}>
+                            {
+                                this.state.isVideoMode ?
+                                    <Icon name="camera" style={styles.iconButton} /> :
+                                    <Icon name="video-camera" style={styles.iconButton} />
+                            }
+                        </TouchableOpacity>
 
-                </View>
+                    </View>
+                }
+                {this.loader()}
             </Camera>
         );
     }

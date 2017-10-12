@@ -17,18 +17,26 @@ const styles = StyleSheet.create({
     top: moderateScale(35)
   },
   selectText: {
-    fontWeight: "200",
+    fontSize: normalize(18),
+    fontWeight: "500",
+    color: '#fff'
   },
   footerView: {
     position: 'absolute',
-    bottom: moderateScale(0),
-    left: moderateScale(0)
+    flexDirection: 'row',
+    justifyContent: 'center',
+    bottom: moderateScale(5),
+    width: width
   },
-  iconButton: {
-    fontSize: normalize(32),
-    color: "#34d058",
-    padding: moderateScale(10)
+  footerIconButton: {
+    fontSize: normalize(30),
+    color: "#fff",
   },
+  innerFooterView: {
+    paddingHorizontal: moderateScale(30)
+  }
 });
 
 export default styles;
+
+// green color solocator : #34d058
