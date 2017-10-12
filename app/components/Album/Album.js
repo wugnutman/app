@@ -3,7 +3,7 @@ import PhotoBrowser from 'react-native-photo-browser';
 import * as RNFS from 'react-native-fs';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Share, { ShareSheet, Button } from 'react-native-share';
-import { Text, TouchableOpacity, View, Image } from 'react-native';
+import { Text, TouchableOpacity, View, Image, ActivityIndicator } from 'react-native';
 
 import styles from './Album.styles';
 import {
@@ -25,6 +25,7 @@ export default class Album extends Component {
             shareVisible: false,
             selectedItem: null,
             visible: false,
+            loading: true
         }
     }
 
@@ -32,99 +33,113 @@ export default class Album extends Component {
         this.fetchImages();
     }
 
+    // ==============================> Loader
+    loader() {
+        if (this.state.loading)
+            return <ActivityIndicator size="large" />;
+    }
+
     // ==============================> Render function definition
     render() {
-        console.log(selectedArray);
         return (
             <View style={styles.container}>
 
-                {/* Display images in grid viewff */}
-                <PhotoBrowser
-                    style={{ backgroundColor: 'black' }}
-                    onBack={() => this.props.navigation.goBack()}
-                    mediaList={this.state.media}
-                    useCircleProgress={true}
-                    alwaysDisplayStatusBar={true}
-                    alwaysShowControls={true}
-                    displayTopBar={true}
-                    displayActionButton={true}
-                    displayNavArrows={false}
-                    enableGrid={true}
-                    startOnGrid={true}
-                    displaySelectionButtons={this.state.shareVisible}
-                    square={true}
-                    itemPerRow={2}
-                    onSelectionChanged={(media, index, selected) => {
-                        console.log('on share Visible ::: ', media, index, selected);
-                        if (selected) {
-                            let tempArr = selectedArray;
-                            tempArr.push(media);
-                            selectedArray = tempArr;
-                        } else {
-                            let tempArr = selectedArray;
-                            tempArr = tempArr.filter((item) => item.photo !== media.photo)
-                            selectedArray = tempArr;
-                        }
-                        console.log(selectedArray);
-                    }}
-                    onActionButton={(media, index) => {
-                        console.log('on action ::: ', media, index);
-                        this.setState({ visible: true, selectedItem: media.photo });
-                    }}
-                />
+                {this.state.loading ?
+                    null :
+                    <View>
+                        {/* Display images in grid viewff */}
+                        <View style={styles.photoOuter}>
+                            <PhotoBrowser
+                                style={styles.photoBrowserStyle}
+                                onBack={() => this.props.navigation.goBack()}
+                                mediaList={this.state.media}
+                                useCircleProgress={true}
+                                alwaysDisplayStatusBar={true}
+                                alwaysShowControls={true}
+                                displayTopBar={true}
+                                displayActionButton={true}
+                                displayNavArrows={false}
+                                enableGrid={true}
+                                startOnGrid={true}
+                                displaySelectionButtons={this.state.shareVisible}
+                                square={true}
+                                itemPerRow={3}
+                                onSelectionChanged={(media, index, selected) => {
+                                    console.log('on share Visible ::: ', media, index, selected);
+                                    if (selected) {
+                                        let tempArr = selectedArray;
+                                        tempArr.push(media);
+                                        selectedArray = tempArr;
+                                    } else {
+                                        let tempArr = selectedArray;
+                                        tempArr = tempArr.filter((item) => item.photo !== media.photo)
+                                        selectedArray = tempArr;
+                                    }
+                                    console.log(selectedArray);
+                                }}
+                                onActionButton={(media, index) => {
+                                    console.log('on action ::: ', media, index);
+                                    this.setState({ visible: true, selectedItem: media.photo });
+                                }}
+                            />
+                        </View>
 
-                {/* Header */}
-                <View style={styles.headerView}>
-                    <TouchableOpacity onPress={() => this.setState({ shareVisible: !this.state.shareVisible })}>
+                        {/* Header */}
+                        {this.state.media.length ?
+                            <View style={styles.headerView}>
+                                <TouchableOpacity onPress={() => this.setState({ shareVisible: !this.state.shareVisible })}>
+                                    {this.state.shareVisible ?
+                                        <Text style={styles.selectText}>CANCEL</Text> :
+                                        <Text style={styles.selectText}>SELECT</Text>
+                                    }
+                                </TouchableOpacity>
+                            </View>
+                            : null}
+
+                        {/* Footer */}
                         {this.state.shareVisible ?
-                            <Text style={styles.selectText}>CANCEL</Text> :
-                            <Text style={styles.selectText}>SELECT</Text>
-                        }
-                    </TouchableOpacity>
-                </View>
+                            <View style={styles.footerView}>
 
-                {/* Footer */}
-                {this.state.shareVisible ?
-                    <View style={styles.footerView}>
+                                <View style={styles.innerFooterView}>
+                                    <TouchableOpacity onPress={this.saveSelected.bind(this)}>
+                                        <Icon name="floppy-o" style={styles.footerIconButton} />
+                                    </TouchableOpacity>
+                                </View>
 
-                        <View style={styles.innerFooterView}>
-                            <TouchableOpacity onPress={this.saveSelected.bind(this)}>
-                                <Icon name="floppy-o" style={styles.footerIconButton} />
-                            </TouchableOpacity>
-                        </View>
+                                <View style={styles.innerFooterView}>
+                                    <TouchableOpacity onPress={this.deleteSelected.bind(this)}>
+                                        <Icon name="trash" style={styles.footerIconButton} />
+                                    </TouchableOpacity>
+                                </View>
 
-                        <View style={styles.innerFooterView}>
-                            <TouchableOpacity onPress={this.deleteSelected.bind(this)}>
-                                <Icon name="trash" style={styles.footerIconButton} />
-                            </TouchableOpacity>
-                        </View>
+                            </View>
+                            : null}
 
+                        {/* Share */}
+                        <ShareSheet visible={this.state.visible} onCancel={() => { this.setState({ visible: false }) }}>
+
+                            <Button iconSrc={{ uri: TWITTER_ICON }} onPress={this.share.bind(this, "twitter")}
+                            >Twitter</Button>
+
+                            <Button iconSrc={{ uri: FACEBOOK_ICON }} onPress={this.share.bind(this, "facebook")}
+                            >Facebook</Button>
+
+                            <Button iconSrc={{ uri: WHATSAPP_ICON }} onPress={this.share.bind(this, "whatsapp")}
+                            >Whatsapp</Button>
+
+                            <Button iconSrc={{ uri: GOOGLE_PLUS_ICON }} onPress={this.share.bind(this, "googleplus")}
+                            >Google +</Button>
+
+                            <Button iconSrc={{ uri: EMAIL_ICON }} onPress={this.share.bind(this, "email")}
+                            >Email</Button>
+
+                            <Button iconSrc={{ uri: MORE_ICON }} onPress={this.share.bind(this, null)}
+                            >More</Button>
+
+                        </ShareSheet>
                     </View>
-                    : null}
-
-                {/* Share */}
-                <ShareSheet visible={this.state.visible} onCancel={() => { this.setState({ visible: false }) }}>
-
-                    <Button iconSrc={{ uri: TWITTER_ICON }} onPress={this.share.bind(this, "twitter")}
-                    >Twitter</Button>
-
-                    <Button iconSrc={{ uri: FACEBOOK_ICON }} onPress={this.share.bind(this, "facebook")}
-                    >Facebook</Button>
-
-                    <Button iconSrc={{ uri: WHATSAPP_ICON }} onPress={this.share.bind(this, "whatsapp")}
-                    >Whatsapp</Button>
-
-                    <Button iconSrc={{ uri: GOOGLE_PLUS_ICON }} onPress={this.share.bind(this, "googleplus")}
-                    >Google +</Button>
-
-                    <Button iconSrc={{ uri: EMAIL_ICON }} onPress={this.share.bind(this, "email")}
-                    >Email</Button>
-
-                    <Button iconSrc={{ uri: MORE_ICON }} onPress={this.share.bind(this, null)}
-                    >More</Button>
-
-                </ShareSheet>
-
+                }
+                {this.loader()}
             </View>
         );
     }
@@ -140,7 +155,7 @@ export default class Album extends Component {
                     RNFS.unlink(item.photo)
                         .then(() => {
                             console.log(index, selectedArray.length);
-                            if(index+1 === selectedArray.length){
+                            if (index + 1 === selectedArray.length) {
                                 selectedArray = [];
                                 this.fetchImages();
                             }
@@ -210,7 +225,7 @@ export default class Album extends Component {
                             media.push(obj)
                         });
                         media.reverse();
-                        this.setState({ media: media });
+                        this.setState({ media: media, loading: false });
                     })
             });
     }

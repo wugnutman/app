@@ -10,10 +10,13 @@ const { width, height } = Dimensions.get('window');
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'flex-end',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   menuContainer: {
+    position: 'absolute',
+    bottom: 0,
+    width: moderateScale(width),
     flexDirection: 'row',
     alignSelf: "stretch",
     justifyContent: "space-between",
@@ -45,6 +48,12 @@ const styles = StyleSheet.create({
     fontSize: normalize(32),
     color: "#fff",
   },
+  loaderView: {
+    backgroundColor: 'transparent',
+    position: 'absolute',
+    top: moderateScale(height / 2),
+    left: moderateScale(width / 2)
+  }
 });
 
 export default styles;

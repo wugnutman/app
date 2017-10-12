@@ -28,7 +28,11 @@ export default class Main extends Component {
 
     componentWillMount() {
         AsyncStorage.getItem('lastClickedImage', (err, result) => {
-            this.setState({ albumImage: result });
+            return RNFS.exists(result)
+                .then((isExist) => {
+                    if (isExist)
+                        this.setState({ albumImage: result });
+                })
         })
     }
 
@@ -155,7 +159,9 @@ export default class Main extends Component {
     // ==============================> Loader
     loader() {
         if (this.state.loading)
-            return <ActivityIndicator size="large" hidesWhenStopped={true} />;
+            return <View style={styles.loaderView}>
+                <ActivityIndicator animating={true} size="large" />
+            </View>;
     }
 
     // ==============================> Render function definition
@@ -166,47 +172,46 @@ export default class Main extends Component {
                 captureTarget={Camera.constants.CaptureTarget.temp}
                 captureQuality={Camera.constants.CaptureQuality.high}
                 aspect={Camera.constants.Aspect.fill}
-                style={this.state.loading ? [styles.container, { justifyContent: 'center' }] : styles.container}
+                style={styles.container}
             >
-                {this.state.loading ? null :
-                    <View style={styles.menuContainer}>
+                <View style={styles.menuContainer}>
 
-                        {/* Album View */}
-                        <TouchableOpacity onPress={this.onPressAlbumButton.bind(this)}>
-                            <Image
-                                source={{ uri: 'file://' + this.state.albumImage }}
-                                style={styles.albumButton}
-                            />
-                        </TouchableOpacity>
+                    {/* Album View */}
+                    <TouchableOpacity onPress={this.onPressAlbumButton.bind(this)}>
+                        {this.state.albumImage ?
+                            <Image source={{ uri: 'file://' + this.state.albumImage }} style={styles.albumButton} />
+                            :
+                            <Image source={require('../../common/images/user.jpg')} style={styles.albumButton} />
+                        }
+                    </TouchableOpacity>
 
-                        {/* Location */}
-                        <TouchableOpacity style={{ marginTop: 2 }} onPress={() => alert("Loaction screen, Under developement.")}>
-                            <Icon name="compass" style={styles.iconButton} />
-                        </TouchableOpacity>
+                    {/* Location */}
+                    <TouchableOpacity style={{ marginTop: 2 }} onPress={() => alert("Loaction screen, Under developement.")}>
+                        <Icon name="compass" style={styles.iconButton} />
+                    </TouchableOpacity>
 
-                        {/* Capture Image/Video */}
-                        <TouchableOpacity onPress={this.onPressCapture.bind(this)}>
-                            <View style={styles.captureButtonOuter}>
-                                <View style={styles.captureButton} />
-                            </View>
-                        </TouchableOpacity>
+                    {/* Capture Image/Video */}
+                    <TouchableOpacity onPress={this.onPressCapture.bind(this)}>
+                        <View style={styles.captureButtonOuter}>
+                            <View style={styles.captureButton} />
+                        </View>
+                    </TouchableOpacity>
 
-                        {/* Settings */}
-                        <TouchableOpacity onPress={() => alert("Settings screen, Under developement.")}>
-                            <Icon name="cog" style={styles.iconButton} />
-                        </TouchableOpacity>
+                    {/* Settings */}
+                    <TouchableOpacity onPress={() => alert("Settings screen, Under developement.")}>
+                        <Icon name="cog" style={styles.iconButton} />
+                    </TouchableOpacity>
 
-                        {/* Toggle Camera / Video */}
-                        <TouchableOpacity onPress={this.toggleCameraMode.bind(this)}>
-                            {
-                                this.state.isVideoMode ?
-                                    <Icon name="camera" style={styles.iconButton} /> :
-                                    <Icon name="video-camera" style={styles.iconButton} />
-                            }
-                        </TouchableOpacity>
+                    {/* Toggle Camera / Video */}
+                    <TouchableOpacity onPress={this.toggleCameraMode.bind(this)}>
+                        {
+                            this.state.isVideoMode ?
+                                <Icon name="camera" style={styles.iconButton} /> :
+                                <Icon name="video-camera" style={styles.iconButton} />
+                        }
+                    </TouchableOpacity>
 
-                    </View>
-                }
+                </View>
                 {this.loader()}
             </Camera>
         );
