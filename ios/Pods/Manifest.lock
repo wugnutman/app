@@ -1,0 +1,39 @@
+PODS:
+  - React (0.11.0):
+    - React/Core (= 0.11.0)
+  - react-native-camera (0.10.0):
+    - React
+  - react-native-image-resizer (1.0.0):
+    - React
+  - React/Core (0.11.0)
+  - RNShare (1.0.23):
+    - React
+  - RNVectorIcons (4.4.2):
+    - React
+
+DEPENDENCIES:
+  - react-native-camera (from `../node_modules/react-native-camera`)
+  - react-native-image-resizer (from `../node_modules/react-native-image-resizer`)
+  - RNShare (from `../node_modules/react-native-share`)
+  - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+
+EXTERNAL SOURCES:
+  react-native-camera:
+    :path: ../node_modules/react-native-camera
+  react-native-image-resizer:
+    :path: ../node_modules/react-native-image-resizer
+  RNShare:
+    :path: ../node_modules/react-native-share
+  RNVectorIcons:
+    :path: ../node_modules/react-native-vector-icons
+
+SPEC CHECKSUMS:
+  React: ab1a2e21deb34965c38328d5ec40cc7d12c6050a
+  react-native-camera: a4446f056fb28a9aa7acb3e14af595216aac0a8d
+  react-native-image-resizer: 4516052af6ae0248caf4ccf356caecefe60072d7
+  RNShare: bab307be87ac2e9f475f7a18fd295c6c1640fe4d
+  RNVectorIcons: c1821d56c775cc5a3bca66c77dfc8cb4a90d27e2
+
+PODFILE CHECKSUM: f223dde4c35965f44094098bc5f186058d81389b
+
+COCOAPODS: 1.3.1

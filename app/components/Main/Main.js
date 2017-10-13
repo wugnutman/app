@@ -28,11 +28,15 @@ export default class Main extends Component {
 
     componentWillMount() {
         AsyncStorage.getItem('lastClickedImage', (err, result) => {
-            return RNFS.exists(result)
-                .then((isExist) => {
-                    if (isExist)
-                        this.setState({ albumImage: result });
-                })
+            if (result) {
+                RNFS.exists(result)
+                    .then((isExist) => {
+                        if (isExist)
+                            this.setState({ albumImage: result });
+                        else
+                            this.setState({ albumImage: false });
+                    })
+            }
         })
     }
 
@@ -40,12 +44,15 @@ export default class Main extends Component {
         self = this;
     }
 
-    // ==============================> Capture Image
+    /**
+     * onPress Catpure method : To capture image and save it to app directory or folder.
+     * --> Image will captured by camera.capture()
+     * --> Then captured image will save to directory : storage/Andy_Solocator_App/Thumbnails or Images
+     */
     onPressCapture() {
-        this.setState({ loading: true });
         this.camera.capture()
             .then((data) => {
-                // Got captured image path stored in cache memory, in data object.
+                this.setState({ loading: true });
 
                 // Define paths
                 MEDIA_DESTINATION = RNFS.ExternalStorageDirectoryPath + MEDIA_DEST;
@@ -53,7 +60,7 @@ export default class Main extends Component {
                 MEDIA_THUMB_DESTINATION = RNFS.ExternalStorageDirectoryPath + THUMB_MEDIA_DEST;
                 IMAGE_NAME = '/' + Math.floor(new Date()).toString() + '.jpg';
 
-                // =====> To check whether Main Directory path is exist or not
+                // To check whether Main Directory path is exist or not
                 checkPath(MEDIA_DESTINATION)
                     .then((isExist) => {
                         if (isExist) {
@@ -71,6 +78,10 @@ export default class Main extends Component {
             });
     }
 
+    /**
+     * To save captured image in storage.
+     * @param {Captured image result} data 
+     */
     workInImages(data) {
         // 1- Thumbnail 2- Image
 
@@ -132,23 +143,16 @@ export default class Main extends Component {
             });
     }
 
-    // ==============================> To Stop Video recording
-    onPressCaptureStop() {
-        this.camera.stopCapture()
-            .then((data) => {
-                console.log(data);
-            })
-            .catch(err => {
-                console.error(err)
-            });
-    }
-
-    // ==============================> Move to Album screen
+    /**
+     * onPress Album Icon : To move on Album screen
+     */
     onPressAlbumButton() {
         this.props.navigation.navigate('album');
     }
 
-    // ==============================> Toggle Camer/Video icon
+    /**
+     * To toggle Camer/Video icon
+     */
     toggleCameraMode() {
         const { isVideoMode } = this.state;
         this.setState({
@@ -156,7 +160,9 @@ export default class Main extends Component {
         })
     }
 
-    // ==============================> Loader
+    /**
+     * Loader method : returns ActivityIndicator
+     */
     loader() {
         if (this.state.loading)
             return <View style={styles.loaderView}>
@@ -164,7 +170,9 @@ export default class Main extends Component {
             </View>;
     }
 
-    // ==============================> Render function definition
+    /**
+     * Render method definition
+     */
     render() {
         return (
             <Camera

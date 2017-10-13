@@ -8,16 +8,21 @@ import normalize, { moderateScale } from '../../lib/normalize';
 const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+  loaderView: {
+    backgroundColor: 'transparent',
+    position: 'absolute',
+    top: moderateScale(height / 2),
+    left: moderateScale(width / 2)
+  },
   container: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'black',
   },
-  photoOuter: {
-    backgroundColor: 'black',
-  },
   photoBrowserStyle: {
     backgroundColor: 'black',
+    width: width
   },
   headerView: {
     position: 'absolute',

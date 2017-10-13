@@ -8,6 +8,12 @@ import normalize, { moderateScale } from '../../lib/normalize';
 const { width, height } = Dimensions.get('window');
 
 const styles = StyleSheet.create({
+  loaderView: {
+    backgroundColor: 'transparent',
+    position: 'absolute',
+    top: moderateScale(height / 2),
+    left: moderateScale(width / 2)
+  },
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -47,12 +53,6 @@ const styles = StyleSheet.create({
   iconButton: {
     fontSize: normalize(32),
     color: "#fff",
-  },
-  loaderView: {
-    backgroundColor: 'transparent',
-    position: 'absolute',
-    top: moderateScale(height / 2),
-    left: moderateScale(width / 2)
   }
 });
 
