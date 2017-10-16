@@ -51,5 +51,3 @@ const styles = StyleSheet.create({
 });
 
 export default styles;
-
-// green color solocator : #34d058
