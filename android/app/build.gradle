@@ -90,17 +90,26 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = false
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.3"
 
     defaultConfig {
         applicationId "com.livestreamingchatapp"
         minSdkVersion 16
-        targetSdkVersion 22
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
+        }
+        multiDexEnabled true
+    }
+    signingConfigs{
+        release {
+            storeFile file('/Users/daff/Documents/Projects/Live_stream/app/android/app/andy_solocator_app.keystore')
+        storePassword 'hrhk@123'
+        keyAlias 'andy_solocator_app'
+        keyPassword 'hrhk@123'
         }
     }
     splits {
@@ -115,6 +124,7 @@ android {
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
+            signingConfig signingConfigs.release
         }
     }
     // applicationVariants are e.g. debug, release
@@ -133,8 +143,12 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-fs')
+    compile project(':react-native-image-resizer')
+    compile project(':react-native-share')
+    compile project(':react-native-vector-icons')
     compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:23.0.1"
+    compile "com.android.support:appcompat-v7:23.0.1" 
     compile "com.facebook.react:react-native:+"  // From node_modules
 }
 
